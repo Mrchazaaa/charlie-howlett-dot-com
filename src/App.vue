@@ -2,24 +2,18 @@
   <div id="app">
     <PreLoad/>
     <TitleContainerComponent/>
-    <ContentContainerComponent/>
-    <FooterComponent/>
   </div>
 </template>
 
 <script>
   import PreLoad from './components/PreLoad.vue'
-  import ContentContainerComponent from './components/ContentContainer.vue';
   import TitleContainerComponent from './components/TitleContainer.vue';
-  import FooterComponent from "./components/Footer.vue";
 
   export default {
     name: 'app',
     components: {
       PreLoad,
-      TitleContainerComponent,
-      ContentContainerComponent,
-      FooterComponent
+      TitleContainerComponent
     },
   }
 </script>
@@ -33,12 +27,12 @@
   body, html {
     margin:0;
     padding:0;
-    height: 100%;
+    height: 100dvh;
   }
   hr {
       margin-bottom: 0px;
   }
   .border {
-    border-radius: 4px;
+    // border-radius: 4px;
   }
 </style>
