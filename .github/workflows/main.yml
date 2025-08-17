@@ -46,4 +46,10 @@ jobs:
             --site "${{ secrets.NETLIFY_SITE_ID }}" \
             --dir dist \
             --prod \
-            --message "GitHub Actions deploy ${GITHUB_SHA::7}"
+            --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
+            --json > ./DeployOutput.json
+      - name: Upload deploy output
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-output
+          path: DeployOutput.json
