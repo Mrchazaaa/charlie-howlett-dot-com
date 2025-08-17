@@ -53,3 +53,25 @@ jobs:
         with:
           name: deploy-output
           path: DeployOutput.json
+  lighthouse:
+    needs: deploy_production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: deploy-output
+          path: DeployOutput.json
+      - name: Set unique deploy target url
+        id: setuniquedeploytarget
+        run: |
+          UNIQUE_DEPLOY_TARGET=$(jq -r '.deploy_url' ./DeployOutput.json)
+
+          echo "unique_deploy_target=$UNIQUE_DEPLOY_TARGET" >> $GITHUB_OUTPUT
+      - name: audit urls using lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
+          uploadartifacts: true # save results as an action artifacts
+          configPath: ./lighthouserc.json

@@ -1,0 +1,19 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 1,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "devtools"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./lhci-reports"
+    },
+    "assert": {
+      "preset": "lighthouse:recommended"
+    }
+  }
+}
+
