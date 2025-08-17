@@ -1,13 +1,12 @@
-name: lighthouse ci
+name: build and deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -33,7 +32,6 @@ jobs:
           path: dist
   deploy_production:
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
