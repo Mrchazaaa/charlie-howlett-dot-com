@@ -77,7 +77,7 @@ jobs:
           configPath: ./lighthouserc.json
       - name: move reports to dist
         run:
-          find target -type f -name '*.json' ! -name 'manifest.json' -exec cp {} dist/ \;
+          find ./lhci-reports -type f -name '*.json' ! -name 'manifest.json' -exec cp {} dist/ \;
       - name: Upload build artifact with report
         uses: actions/upload-artifact@v4
         with:
