@@ -75,3 +75,13 @@ jobs:
             ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
           uploadartifacts: true # save results as an action artifacts
           configPath: ./lighthouserc.json
+      - name: move reports to dist
+        run:
+          find target -type f -name '*.json' ! -name 'manifest.json' -exec cp {} dist/ \;
+      - name: Upload build artifact with report
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build-with-reports
+          path: dist
+
+
