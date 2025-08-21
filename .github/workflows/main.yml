@@ -87,13 +87,11 @@ jobs:
         run: |
           npm install -g netlify-cli
 
-          ls
-
           timestamp=$(date +%Y-%m-%d-%H-%M-%S)
           for file in ./lhci-reports/lhr*; do
               if [[ -f "$file" ]]; then
                   filename=$(basename "$file")
-                  netlify blobs:set lighthouse-reports "${timestamp}_${filename}" "$file"
+                  netlify blobs:set lighthouse-reports "${timestamp}_${filename}" $file
                   echo "Uploaded: ${timestamp}_${filename}"
               fi
           done
