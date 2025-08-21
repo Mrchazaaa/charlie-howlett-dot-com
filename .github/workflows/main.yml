@@ -92,7 +92,9 @@ jobs:
           for file in ./lhci-reports/lhr*; do
               if [[ -f "$file" ]]; then
                   filename=$(basename "$file")
-                  netlify blobs:set lighthouse-reports "${timestamp}_${filename}"  --input  "$file"
+                  netlify blobs:set lighthouse-reports "${timestamp}_${filename}" --input "$file"
                   echo "Uploaded: ${timestamp}_${filename}"
               fi
           done
+
+          netlify blobs:set site-versions "${timestamp}" ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
