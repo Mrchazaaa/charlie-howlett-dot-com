@@ -75,13 +75,18 @@ jobs:
             ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
           uploadartifacts: true # save results as an action artifacts
           configPath: ./lighthouserc.json
-      - name: move reports to dist
-        run:
-          find ./lhci-reports -type f -name '*.json' ! -name 'manifest.json' -exec cp {} dist/ \;
-      - name: Upload build artifact with report
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build-with-reports
-          path: dist
+      - name: upload outputs to blob storage
+        env:
+          NETLIFY_AUTH_TOKEN: "${{ secrets.NETLIFY_AUTH_TOKEN }}"
+          NETLIFY_SITE_ID: "${{ secrets.NETLIFY_SITE_ID }}"
+        run: |
+          npm install -g netlify-cli
 
-
+          timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+          for file in ./lhci-reports/lhr*; do
+              if [[ -f "$file" ]]; then
+                  filename=$(basename "$file")
+                  netlify blobs:set lighthouse-reports "${timestamp}_${filename}" "$file"
+                  echo "Uploaded: ${timestamp}_${filename}"
+              fi
+          done
