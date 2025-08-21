@@ -73,7 +73,7 @@ jobs:
         with:
           urls: |
             ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
-          uploadartifacts: true # save results as an action artifacts
+          uploadartifacts: false # save results as an action artifacts
           configPath: ./lighthouserc.json
       - name: upload outputs to blob storage
         env:
@@ -81,6 +81,8 @@ jobs:
           NETLIFY_SITE_ID: "${{ secrets.NETLIFY_SITE_ID }}"
         run: |
           npm install -g netlify-cli
+
+          ls
 
           timestamp=$(date +%Y-%m-%d-%H-%M-%S)
           for file in ./lhci-reports/lhr*; do
