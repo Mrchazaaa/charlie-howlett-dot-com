@@ -45,7 +45,7 @@ jobs:
             --auth "${{ secrets.NETLIFY_AUTH_TOKEN }}" \
             --site "${{ secrets.NETLIFY_SITE_ID }}" \
             --dir dist \
-            --prod \
+            # --prod \
             --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
             --json > ./DeployOutput.json
       - name: Upload deploy output
@@ -73,8 +73,12 @@ jobs:
         with:
           urls: |
             ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
-          uploadartifacts: false # save results as an action artifacts
+          uploadartifacts: true # save results as an action artifacts
           configPath: ./lighthouserc.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: lighthouse-results
+          path: ./lhci-reports
       - name: upload outputs to blob storage
         env:
           NETLIFY_AUTH_TOKEN: "${{ secrets.NETLIFY_AUTH_TOKEN }}"
