@@ -5,6 +5,15 @@ on:
     branches: [ master ]
 
 jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.set.outputs.timestamp }}
+    steps:
+      - name: Install deps
+        id: set
+        run: echo "timestamp=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +39,7 @@ jobs:
         with:
           name: web-build
           path: dist
+
   deploy_production:
     needs: build
     runs-on: ubuntu-latest
@@ -53,8 +63,9 @@ jobs:
         with:
           name: deploy-output
           path: DeployOutput.json
+
   lighthouse:
-    needs: deploy_production
+    needs: [deploy_production, set_variables]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -88,7 +99,8 @@ jobs:
         run: |
           npm install -g netlify-cli
 
-          timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+          timestamp="${{ needs.set_variables.outputs.timestamp }}"
+
           for file in ./lhci-reports/lhr*; do
               if [[ -f "$file" ]]; then
                   filename=$(basename "$file")
@@ -98,3 +110,40 @@ jobs:
           done
 
           netlify blobs:set site-versions "${timestamp}" ${{ steps.setuniquedeploytarget.outputs.unique_deploy_target }}
+
+  build-analytics:
+    runs-on: ubuntu-latest
+    needs: set_variables
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        env:
+          NODE_ENV: production
+        run: npm run build:stats
+      - name: Upload build artifact (dist)
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-analytics-build
+          path: dist
+      - name: upload outputs to blob storage
+        env:
+          NETLIFY_AUTH_TOKEN: "${{ secrets.NETLIFY_AUTH_TOKEN }}"
+          NETLIFY_SITE_ID: "${{ secrets.NETLIFY_SITE_ID }}"
+        run: |
+          npm install -g netlify-cli
+
+          timestamp="${{ needs.set_variables.outputs.timestamp }}"
+
+          netlify blobs:set analytics-reports "${timestamp}_statoscope-report.json" --input "dist/statoscope-webpack-stats.json"
+          netlify blobs:set analytics-reports "${timestamp}_statoscope-report.html" --input "dist/statoscope.html"
+
+          netlify blobs:set analytics-reports "${timestamp}_vue-webpack-report.json" --input "dist/report.json"
+          netlify blobs:set analytics-reports "${timestamp}_vue-webpack-report.html" --input "dist/report.html"
