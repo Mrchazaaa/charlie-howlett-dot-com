@@ -1,24 +1,4 @@
 # charlie-howlett-dot-com
 
-## Project setup
-```
-npm install
-```
+[![Netlify Status](https://api.netlify.com/api/v1/badges/be44788a-33c2-40d1-95fa-1d358994813f/deploy-status)](https://app.netlify.com/projects/goofy-jang-4365f6/deploys)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
