@@ -5,10 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build:stats": "BUILD_STATS=true vue-cli-service build --report --report-json",
+    "build:stats": "vue-cli-service build --report --report-json",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.0.8",
+    "@netlify/functions": "^4.2.2",
     "core-js": "^3.8.3",
     "node-sass": "^7.0.1",
     "p5": "^1.4.1",
