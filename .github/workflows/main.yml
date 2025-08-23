@@ -126,5 +126,5 @@ jobs:
           lighthouseReports=$(find "./lhci-reports/" -name "*.json" -printf "%p;" | sed 's/;$//')
 
           node ./UploadAnalyticsReport.js \
-            --lighthouseReportPaths $lighthouseReports
+            --lighthouseReportPaths $lighthouseReports \
             --webpackAnalyticsReportPath "./dist/report.json"
