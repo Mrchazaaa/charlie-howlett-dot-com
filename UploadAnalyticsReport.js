@@ -7,10 +7,14 @@ import path from "path";
 
 function ReadFileIfExists(filepath)
 {
+    console.log(`Attempting to read file ${filepath}`)
+
     if (filepath == null)
     {
         return null;
     }
+
+    console.log(`Reading file ${filepath}`)
 
     return JSON.parse(readFileSync(filepath, "utf-8"));
 }
@@ -22,8 +26,8 @@ async function UploadToNetlifyBlobs(analyticsReport)
     const STORE = "site-analytics";
     const PREFIX = timestamp;
 
-    var siteID = process.env.NETLIFY_AUTH_TOKEN;
-    var token = process.env.NETLIFY_SITE_ID;
+    var siteID = process.env.NETLIFY_SITE_ID;
+    var token = process.env.NETLIFY_AUTH_TOKEN;
 
     // In production you can usually omit opts; locally you need them to read live data.
     const opts = siteID && token ? { siteID, token, name: STORE } : undefined;
@@ -44,6 +48,9 @@ for (let i = 0; i < args.length; i++) {
     parsedArgs[key] = value;
   }
 }
+
+console.log(`Reading lighthouse reports input: ${parsedArgs.lighthouseReportPaths}`)
+console.log(`Reading webpack report input: ${parsedArgs.webpackAnalyticsReportPath}`)
 
 // Read in reports from dist/
 const inputlighthouseReports = parsedArgs.lighthouseReportPaths.split(";").map(x => ReadFileIfExists(x, "utf-8")) ?? [];
@@ -131,9 +138,10 @@ if (inputWebpackAnalyticsReport != null)
 
 const outputPath = './analyticsReport.json';
 const resolvedPath = path.resolve(outputPath);
-const relativePath = path.relative(process.cwd(), resolvedPath);
+// const relativePath = path.relative(process.cwd(), resolvedPath);
 
-console.log(JSON.stringify({ reportPath: relativePath }));
+// console.log(JSON.stringify({ reportPath: relativePath }));
+
 writeFileSync(resolvedPath, JSON.stringify(analyticsReport, null, 2));
 
 // Upload AnalyticsReport.json to netlify blobs
