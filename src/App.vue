@@ -1,26 +1,12 @@
 <template>
   <div id="app">
-    <PreLoad/>
-    <TitleContainerComponent/>
-    <ContentContainerComponent/>
-    <FooterComponent/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-  import PreLoad from './components/PreLoad.vue'
-  import ContentContainerComponent from './components/ContentContainer.vue';
-  import TitleContainerComponent from './components/TitleContainer.vue';
-  import FooterComponent from "./components/Footer.vue";
-
   export default {
-    name: 'app',
-    components: {
-      PreLoad,
-      TitleContainerComponent,
-      ContentContainerComponent,
-      FooterComponent
-    },
+    name: 'app'
   }
 </script>
 
