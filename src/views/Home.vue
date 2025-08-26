@@ -3,7 +3,7 @@
     <LoadingScreen :show="loading" />
 
     <!-- Main Content -->
-    <div v-if="!loading" class="main-content">
+    <div class="main-content" :class="{ hidden: loading }">
       <TitleContainerComponent/>
       <ContentContainerComponent/>
       <FooterComponent/>
@@ -31,8 +31,11 @@ export default {
     }
   },
   async mounted() {
+    document.body.style.overflow = 'hidden'
+
     await this.waitForPageLoad()
 
+    document.body.style.overflow = ''
     this.loading = false;
   },
   methods: {
@@ -68,6 +71,11 @@ export default {
 
 .main-content {
   animation: fadeIn 0.8s ease-in-out;
+}
+
+.main-content.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes fadeIn {

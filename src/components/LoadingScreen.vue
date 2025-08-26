@@ -1,5 +1,5 @@
 <template>
-  <div v-if="show" class="loading-screen">
+  <div v-if="show" class="loading-screen" data-lcp-exclude>
     <div class="loading-content">
       <div class="loading-spinner"></div>
       <h2 class="mt-3">{{ message }}</h2>
@@ -36,8 +36,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 1000;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .loading-content {
