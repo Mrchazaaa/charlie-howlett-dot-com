@@ -1,5 +1,5 @@
 <template>
-  <div v-if="show" class="loading-screen">
+  <div v-if="show" class="loading-screen" data-lcp-exclude>
     <div class="loading-content">
       <div class="loading-spinner"></div>
       <h2 class="mt-3">{{ message }}</h2>
