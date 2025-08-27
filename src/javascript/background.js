@@ -157,7 +157,6 @@ function clouds(sketch, dockItem) {
 
     // Called every time the canvas is drawn.
     sketch.draw = function() {
-
         if (clouds.length < cloudCountLimit) {
             if (Math.random() < cloudCreationSuccessRate ) {
                 var speed = cloudSpeeds[Math.floor(Math.random() * cloudSpeeds.length)];
@@ -209,5 +208,16 @@ export function setTheme(theme) {
 }
 
 export function cloudsSketch(dockItem) {
-    return new p5(sketch => clouds(sketch, dockItem), dockItem);
+    // Force document.readyState to appear complete to p5
+    Object.defineProperty(document, 'readyState', {
+        get: () => 'complete',
+        configurable: true
+    });
+
+    const p5Instance = new p5(sketch => clouds(sketch, dockItem), dockItem);
+
+    // Restore normal readyState behavior
+    delete document.readyState;
+
+    return p5Instance;
 }
