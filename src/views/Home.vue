@@ -3,23 +3,17 @@
     <!-- Main Content -->
     <div class="main-content">
       <TitleContainerComponent/>
-      <ContentContainerComponent/>
-      <FooterComponent/>
     </div>
   </div>
 </template>
 
 <script>
 import TitleContainerComponent from '../components/TitleContainer.vue';
-import ContentContainerComponent from '../components/ContentContainer.vue';
-import FooterComponent from "../components/Footer.vue";
 
 export default {
   name: 'HomePage',
   components: {
     TitleContainerComponent,
-    ContentContainerComponent,
-    FooterComponent
   },
   methods: {
     async waitForPageLoad() {
