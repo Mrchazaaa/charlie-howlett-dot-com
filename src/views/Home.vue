@@ -63,7 +63,7 @@ export default {
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    opacity: 0.01;
     transform: translateY(0);
   }
   to {
