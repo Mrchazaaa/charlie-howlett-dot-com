@@ -13,7 +13,7 @@ import TitleContainerComponent from '../components/TitleContainer.vue';
 export default {
   name: 'HomePage',
   components: {
-    TitleContainerComponent
+    TitleContainerComponent,
   }
 }
 </script>
