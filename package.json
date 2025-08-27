@@ -5,25 +5,32 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:stats": "vue-cli-service build --report --report-json",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.0.8",
+    "@netlify/functions": "^4.2.2",
     "core-js": "^3.8.3",
     "node-sass": "^7.0.1",
     "p5": "^1.4.1",
     "sass-loader": "^13.0.0",
     "swiper": "^8.2.4",
     "vue": "^3.2.13",
-    "vue-easy-lightbox": "^1.4.1"
+    "vue-easy-lightbox": "^1.4.1",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@statoscope/webpack-plugin": "^5.29.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "netlify-cli": "^23.2.1",
+    "webpack-cli": "^6.0.1"
   },
   "eslintConfig": {
     "root": true,

@@ -1,20 +1,12 @@
 <template>
   <div id="app">
-    <PreLoad/>
-    <TitleContainerComponent/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-  import PreLoad from './components/PreLoad.vue'
-  import TitleContainerComponent from './components/TitleContainer.vue';
-
   export default {
-    name: 'app',
-    components: {
-      PreLoad,
-      TitleContainerComponent
-    },
+    name: 'app'
   }
 </script>
 
