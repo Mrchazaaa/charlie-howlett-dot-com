@@ -1,9 +1,7 @@
 <template>
   <div class="home">
-    <LoadingScreen :show="loading" />
-
     <!-- Main Content -->
-    <div class="main-content" :class="{ hidden: loading }">
+    <div class="main-content">
       <TitleContainerComponent/>
       <ContentContainerComponent/>
       <FooterComponent/>
@@ -15,28 +13,13 @@
 import TitleContainerComponent from '../components/TitleContainer.vue';
 import ContentContainerComponent from '../components/ContentContainer.vue';
 import FooterComponent from "../components/Footer.vue";
-import LoadingScreen from '../components/LoadingScreen.vue';
 
 export default {
   name: 'HomePage',
   components: {
     TitleContainerComponent,
     ContentContainerComponent,
-    FooterComponent,
-    LoadingScreen
-  },
-  data() {
-    return {
-      loading: true
-    }
-  },
-  async mounted() {
-    document.body.style.overflow = 'hidden'
-
-    await this.waitForPageLoad()
-
-    document.body.style.overflow = ''
-    this.loading = false;
+    FooterComponent
   },
   methods: {
     async waitForPageLoad() {
