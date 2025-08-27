@@ -32,6 +32,7 @@
 
 <script>
   import {cloudsSketch, setTheme} from '../javascript/background.js';
+  import ImagePreloader from "../javascript/imagePreloader.js";
 
   export default {
     name: 'TitleContainerComponent',
@@ -39,6 +40,16 @@
       return {
         myp5: null
       }
+    },
+    created() {
+      const imageSources = [
+          require('@/assets/mountains.svg'),
+          require('@/assets/mountains-dark.svg'),
+          require("@/assets/moon.webp"),
+          require("@/assets/moon-dark.webp")
+      ];
+
+      ImagePreloader.preloadImages(imageSources);
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));
