@@ -20,29 +20,6 @@ export default {
     TitleContainerComponent,
     ContentContainerComponent,
     FooterComponent
-  },
-  methods: {
-    async waitForPageLoad() {
-      // Wait for DOM to be ready
-      await this.$nextTick()
-
-      // Wait for all images to load
-      const images = document.querySelectorAll('img')
-      const imagePromises = Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve()
-
-        return new Promise((resolve) => {
-          img.onload = resolve
-          img.onerror = resolve // Still resolve on error to avoid hanging
-        })
-      })
-
-      if (document.fonts) {
-        await document.fonts.ready
-      }
-
-      await Promise.all(imagePromises)
-    }
   }
 }
 </script>
