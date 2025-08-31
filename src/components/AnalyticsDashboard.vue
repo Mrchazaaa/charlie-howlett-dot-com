@@ -18,48 +18,63 @@
     </div>
 
     <div v-else-if="!loading && !error" class="analytics-content">
-      <!-- Summary Cards -->
-      <div class="row mb-4">
-        <div class="col-sm-6 col-md-4 mb-3 d-flex" v-for="(metric, index) in summaryMetrics" :key="index">
-          <div class="card bg-light w-100">
-            <div class="card-body text-center d-flex flex-column justify-content-center">
-              <h5 class="card-title text-muted">{{ metric.label }}</h5>
-              <h2 class="card-text text-primary">{{ metric.value }}</h2>
-              <small class="text-muted">{{ metric.unit }}</small>
+      <div class="mb-3">
+        <div class="row mb-4">
+          <div class="col-sm-6 col-md-3 mb-3 d-flex" v-for="(metric, index) in lighthouseMetrics" :key="index">
+            <div class="card bg-light w-100">
+              <div class="card-body text-center d-flex flex-column justify-content-center">
+                <h5 class="card-title text-muted">{{ metric.label }}</h5>
+                <h2 class="card-text text-primary">{{ metric.value }}</h2>
+                <small class="text-muted">{{ metric.unit }}</small>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Build Analysis Card -->
-        <div class="col-lg-6 col-xl-4 mb-3 d-flex">
-          <div class="card bg-light w-100">
-            <div class="card-body">
-              <h5 class="card-title text-muted text-center mb-3">Build Analysis</h5>
-              <div class="table-responsive">
-                <table class="table table-sm table-hover mb-0">
-                  <thead class="table-dark">
-                    <tr>
-                      <th>Category</th>
-                      <th>Size</th>
-                      <th>%</th>
-                      <th>Files</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(category, key) in assetCategories" :key="key">
-                      <td><span class="badge bg-primary text-white">{{ key }}</span></td>
-                      <td>{{ formatBytes(category.bytes) }}</td>
-                      <td>{{ category.percentage }}%</td>
-                      <td>{{ category.files.length }}</td>
-                    </tr>
-                    <tr class="table-light fw-bold border-top border-2">
-                      <td>Total</td>
-                      <td>{{ formatBytes(buildInfo.totalSize) }}</td>
-                      <td>100%</td>
-                      <td>{{ totalFiles }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+      <div class="mb-4">
+        <div class="row">
+          <div class="col-sm-6 col-md-4 mb-3 d-flex" v-for="(metric, index) in buildMetrics" :key="index">
+            <div class="card bg-light w-100">
+              <div class="card-body text-center d-flex flex-column justify-content-center">
+                <h5 class="card-title text-muted">{{ metric.label }}</h5>
+                <h2 class="card-text text-primary">{{ metric.value }}</h2>
+                <small class="text-muted">{{ metric.unit }}</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Build Analysis Card -->
+          <div class="col-lg-8 mb-3 d-flex">
+            <div class="card bg-light w-100">
+              <div class="card-body">
+                <h5 class="card-title text-muted text-center mb-3">Asset Breakdown</h5>
+                <div class="table-responsive">
+                  <table class="table table-sm table-hover mb-0">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>Category</th>
+                        <th>Size</th>
+                        <th>%</th>
+                        <th>Files</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(category, key) in assetCategories" :key="key">
+                        <td><span class="badge bg-primary text-white">{{ key }}</span></td>
+                        <td>{{ formatBytes(category.bytes) }}</td>
+                        <td>{{ category.percentage }}%</td>
+                        <td>{{ category.files.length }}</td>
+                      </tr>
+                      <tr class="table-light fw-bold border-top border-2">
+                        <td>Total</td>
+                        <td>{{ formatBytes(buildInfo.totalSize) }}</td>
+                        <td>100%</td>
+                        <td>{{ totalFiles }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -152,33 +167,40 @@ export default {
     }
   },
   computed: {
-    summaryMetrics() {
+    lighthouseMetrics() {
       if (!this.latestReport) return []
 
       const lighthouse = this.latestReport.lighthouseReports?.[0] || {}
-      const webpack = this.latestReport.WebpackAnalyticsReport || {}
 
       return [
         {
-          label: 'Performance Score',
+          label: 'Performance',
           value: lighthouse.performance ? Math.round(lighthouse.performance * 100) : 'N/A',
           unit: lighthouse.performance ? '/100' : ''
         },
         {
-          label: 'Accessibility Score',
+          label: 'Accessibility',
           value: lighthouse.accessibility ? Math.round(lighthouse.accessibility * 100) : 'N/A',
           unit: lighthouse.accessibility ? '/100' : ''
         },
         {
-          label: 'Best Practices Score',
+          label: 'Best Practices',
           value: lighthouse.bestPractices ? Math.round(lighthouse.bestPractices * 100) : 'N/A',
           unit: lighthouse.bestPractices ? '/100' : ''
         },
         {
-          label: 'SEO Score',
+          label: 'SEO',
           value: lighthouse.seo ? Math.round(lighthouse.seo * 100) : 'N/A',
           unit: lighthouse.seo ? '/100' : ''
-        },
+        }
+      ]
+    },
+    buildMetrics() {
+      if (!this.latestReport) return []
+
+      const webpack = this.latestReport.WebpackAnalyticsReport || {}
+
+      return [
         {
           label: 'Build Time',
           value: webpack.buildTimeSeconds ? this.formatTime(webpack.buildTimeSeconds / 1000) : 'N/A',
