@@ -10,20 +10,6 @@
         <button @click="themeToggle" id="dark-theme-btn" type="button" class="btn btn-primary">Dark Theme</button>
       </div>
 
-      <div id="content-pointer">
-        <svg
-          class="bi bi-chevron-down"
-          width="1em"
-          height="1em"
-          viewBox="0 0 16 16"
-          fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg"
-          @click="makeScrollSmooth"
-          href="#content-container">
-          <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-        </svg>
-      </div>
-
       <img class="mountains"/>
 
     </div>
@@ -32,6 +18,7 @@
 
 <script>
   import {cloudsSketch, setTheme} from '../javascript/background.js';
+  import ImagePreloader from "../javascript/imagePreloader.js";
 
   export default {
     name: 'TitleContainerComponent',
@@ -39,6 +26,16 @@
       return {
         myp5: null
       }
+    },
+    created() {
+      const imageSources = [
+          require('@/assets/mountains.svg'),
+          require('@/assets/mountains-dark.svg'),
+          require("@/assets/moon.webp"),
+          require("@/assets/moon-dark.webp")
+      ];
+
+      ImagePreloader.preloadImages(imageSources);
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));
@@ -99,6 +96,7 @@
     margin: 0;
     z-index: 1;
     height: 100%;
+    overflow: hidden;
   }
   canvas {
     height: 100% !important;
@@ -114,7 +112,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     margin: 0 auto;
     align-items: center;

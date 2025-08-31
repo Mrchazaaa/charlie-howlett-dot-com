@@ -19,12 +19,12 @@
   body, html {
     margin:0;
     padding:0;
-    height: 100%;
+    height: 100dvh;
   }
   hr {
       margin-bottom: 0px;
   }
   .border {
-    border-radius: 4px;
+    // border-radius: 4px;
   }
 </style>
