@@ -29,46 +29,14 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Lighthouse Performance Chart -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title mb-0">Lighthouse Performance Metrics</h3>
-            </div>
+        <!-- Build Analysis Card -->
+        <div class="col-lg-6 col-xl-4 mb-3 d-flex">
+          <div class="card bg-light w-100">
             <div class="card-body">
-              <div class="chart-container">
-                <canvas ref="lighthouseChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Build Size Analysis -->
-      <div class="row mb-4">
-        <div class="col-md-6 mb-3">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title mb-0">Bundle Size Trends</h3>
-            </div>
-            <div class="card-body">
-              <div class="chart-container">
-                <canvas ref="sizeChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-3">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title mb-0">Build Analysis</h3>
-            </div>
-            <div class="card-body">
+              <h5 class="card-title text-muted text-center mb-3">Build Analysis</h5>
               <div class="table-responsive">
-                <table class="table table-sm table-hover">
+                <table class="table table-sm table-hover mb-0">
                   <thead class="table-dark">
                     <tr>
                       <th>Category</th>
@@ -92,6 +60,38 @@
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lighthouse Performance Chart -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title mb-0">Lighthouse Performance Metrics</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas ref="lighthouseChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bundle Size Trends Chart -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title mb-0">Bundle Size Trends</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas ref="sizeChart"></canvas>
               </div>
             </div>
           </div>
@@ -165,9 +165,19 @@ export default {
           unit: lighthouse.performance ? '/100' : ''
         },
         {
-          label: 'Total Bundle Size',
-          value: webpack.sizeBreakdown?.total?.bytes ? this.formatBytes(webpack.sizeBreakdown.total.bytes) : 'N/A',
-          unit: ''
+          label: 'Accessibility Score',
+          value: lighthouse.accessibility ? Math.round(lighthouse.accessibility * 100) : 'N/A',
+          unit: lighthouse.accessibility ? '/100' : ''
+        },
+        {
+          label: 'Best Practices Score',
+          value: lighthouse.bestPractices ? Math.round(lighthouse.bestPractices * 100) : 'N/A',
+          unit: lighthouse.bestPractices ? '/100' : ''
+        },
+        {
+          label: 'SEO Score',
+          value: lighthouse.seo ? Math.round(lighthouse.seo * 100) : 'N/A',
+          unit: lighthouse.seo ? '/100' : ''
         },
         {
           label: 'Build Time',
