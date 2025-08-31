@@ -50,9 +50,9 @@
               <div class="card-body">
                 <h5 class="card-title text-muted text-center mb-3">Asset Breakdown</h5>
                 <div class="table-responsive">
-                  <table class="table table-sm table-hover mb-0">
-                    <thead class="table-dark">
-                      <tr>
+                  <table class="table table-sm mb-0 asset-breakdown-table">
+                    <thead>
+                      <tr class="asset-breakdown-header">
                         <th>Category</th>
                         <th>Size</th>
                         <th>%</th>
@@ -60,17 +60,17 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(category, key) in assetCategories" :key="key">
-                        <td><span class="badge bg-primary text-white">{{ key }}</span></td>
+                      <tr v-for="(category, key) in assetCategories" :key="key" class="asset-breakdown-row">
+                        <td><span class="fw-bold">{{ key }}</span></td>
                         <td>{{ formatBytes(category.bytes) }}</td>
                         <td>{{ category.percentage }}%</td>
                         <td>{{ category.files.length }}</td>
                       </tr>
-                      <tr class="table-light fw-bold border-top border-2">
-                        <td>Total</td>
-                        <td>{{ formatBytes(buildInfo.totalSize) }}</td>
-                        <td>100%</td>
-                        <td>{{ totalFiles }}</td>
+                      <tr class="asset-breakdown-total">
+                        <td class="fw-bold">Total</td>
+                        <td class="fw-bold">{{ formatBytes(buildInfo.totalSize) }}</td>
+                        <td class="fw-bold">100%</td>
+                        <td class="fw-bold">{{ totalFiles }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -571,5 +571,34 @@ export default {
 .chart-container canvas {
   width: 100% !important;
   height: 100% !important;
+}
+
+.asset-breakdown-table {
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.asset-breakdown-header {
+  background: linear-gradient(135deg, var(--primary, #007bff) 0%, #0056b3 100%);
+  color: white;
+}
+
+.asset-breakdown-header th {
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.75rem 0.5rem;
+}
+
+.asset-breakdown-row:hover {
+  background-color: rgba(0,123,255,0.05);
+}
+
+.asset-breakdown-total {
+  border-top: 2px solid var(--primary, #007bff);
+}
+
+.asset-breakdown-total td {
+  color: #495057;
 }
 </style>
