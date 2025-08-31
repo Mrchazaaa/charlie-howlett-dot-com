@@ -20,9 +20,9 @@
     <div v-else-if="!loading && !error" class="analytics-content">
       <!-- Summary Cards -->
       <div class="row mb-4">
-        <div class="col-md-3 mb-3" v-for="(metric, index) in summaryMetrics" :key="index">
-          <div class="card bg-light">
-            <div class="card-body text-center">
+        <div class="col-sm-6 col-md-4 mb-3 d-flex" v-for="(metric, index) in summaryMetrics" :key="index">
+          <div class="card bg-light w-100">
+            <div class="card-body text-center d-flex flex-column justify-content-center">
               <h5 class="card-title text-muted">{{ metric.label }}</h5>
               <h2 class="card-text text-primary">{{ metric.value }}</h2>
               <small class="text-muted">{{ metric.unit }}</small>
@@ -39,77 +39,56 @@
               <h3 class="card-title mb-0">Lighthouse Performance Metrics</h3>
             </div>
             <div class="card-body">
-              <canvas ref="lighthouseChart" height="100"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Build Size Breakdown -->
-      <div class="row mb-4">
-        <div class="col-lg-6 mb-3">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title mb-0">Bundle Size Breakdown</h3>
-            </div>
-            <div class="card-body">
-              <canvas ref="sizeChart" height="200"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 mb-3">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title mb-0">Build Information</h3>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <tbody>
-                    <tr v-if="buildInfo.time">
-                      <td><strong>Build Time:</strong></td>
-                      <td>{{ formatTime(buildInfo.buildTimeSeconds) }}</td>
-                    </tr>
-                    <tr v-if="buildInfo.totalSize">
-                      <td><strong>Total Size:</strong></td>
-                      <td>{{ formatBytes(buildInfo.totalSize) }}</td>
-                    </tr>
-                    <tr v-if="buildInfo.time">
-                      <td><strong>Generated:</strong></td>
-                      <td>{{ formatDate(buildInfo.time) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="chart-container">
+                <canvas ref="lighthouseChart"></canvas>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- File Details -->
-      <div class="row">
-        <div class="col-12">
+      <!-- Build Size Analysis -->
+      <div class="row mb-4">
+        <div class="col-md-6 mb-3">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title mb-0">Asset Details</h3>
+              <h3 class="card-title mb-0">Bundle Size Trends</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas ref="sizeChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title mb-0">Build Analysis</h3>
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                  <thead class="thead-dark">
+                <table class="table table-sm table-hover">
+                  <thead class="table-dark">
                     <tr>
                       <th>Category</th>
                       <th>Size</th>
-                      <th>Percentage</th>
+                      <th>%</th>
                       <th>Files</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(category, key) in assetCategories" :key="key">
-                      <td><span class="badge badge-primary">{{ key }}</span></td>
+                      <td><span class="badge bg-primary text-white">{{ key }}</span></td>
                       <td>{{ formatBytes(category.bytes) }}</td>
                       <td>{{ category.percentage }}%</td>
                       <td>{{ category.files.length }}</td>
+                    </tr>
+                    <tr class="table-light fw-bold border-top border-2">
+                      <td>Total</td>
+                      <td>{{ formatBytes(buildInfo.totalSize) }}</td>
+                      <td>100%</td>
+                      <td>{{ totalFiles }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -192,13 +171,8 @@ export default {
         },
         {
           label: 'Build Time',
-          value: webpack.buildTimeSeconds ? this.formatTime(webpack.buildTimeSeconds) : 'N/A',
+          value: webpack.buildTimeSeconds ? this.formatTime(webpack.buildTimeSeconds / 1000) : 'N/A',
           unit: ''
-        },
-        {
-          label: 'Lighthouse Reports',
-          value: this.latestReport.lighthouseReports?.length || 0,
-          unit: 'tests'
         }
       ]
     },
@@ -225,6 +199,11 @@ export default {
       })
 
       return categories
+    },
+    totalFiles() {
+      return Object.values(this.assetCategories).reduce((total, category) => {
+        return total + (category.files?.length || 0)
+      }, 0)
     }
   },
   async mounted() {
@@ -500,13 +479,14 @@ export default {
     formatTime(seconds) {
       if (!seconds) return 'N/A'
 
-      const minutes = Math.floor(seconds / 60)
-      const remainingSeconds = seconds % 60
+      const totalSeconds = Math.round(seconds)
+      const minutes = Math.floor(totalSeconds / 60)
+      const remainingSeconds = totalSeconds % 60
 
       if (minutes > 0) {
         return `${minutes}m ${remainingSeconds}s`
       }
-      return `${remainingSeconds}s`
+      return `${totalSeconds}s`
     },
     formatDate(dateString) {
       if (!dateString) return 'N/A'
@@ -533,25 +513,31 @@ export default {
 }
 
 .card-header {
-  background-color: var(--primary);
+  background-color: var(--primary, #007bff);
   color: white;
   border-bottom: none;
 }
 
-.badge-primary {
-  background-color: var(--primary);
-}
-
 .text-primary {
-  color: var(--primary) !important;
+  color: var(--primary, #007bff) !important;
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  border-color: var(--primary);
+  background-color: var(--primary, #007bff);
+  border-color: var(--primary, #007bff);
 }
 
 .spinner-border {
-  color: var(--primary) !important;
+  color: var(--primary, #007bff) !important;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 </style>
