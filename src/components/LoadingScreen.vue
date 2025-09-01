@@ -31,6 +31,7 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: #303030;
   color: #fff;
   display: flex;
@@ -39,6 +40,19 @@ export default {
   z-index: 1000;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* Prevent body scroll when loading screen is visible */
+:global(body:has(.loading-screen)) {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+@supports not (height: 100dvh) {
+  .loading-screen {
+    height: 100vh;
+  }
 }
 
 .loading-content {
