@@ -23,6 +23,10 @@ async function UploadToNetlifyBlobs(analyticsReport)
 {
     const timestamp = analyticsReport.time;
 
+    if (timestamp == null) {  // true for both null and undefined
+        throw new Error("Timestamp must not be null or undefined");
+    }
+
     const STORE = "site-analytics";
     const PREFIX = timestamp;
 
@@ -131,10 +135,11 @@ if (inputWebpackAnalyticsReport != null)
     };
 
     analyticsReport.WebpackAnalyticsReport = {
-      time: new Date().toISOString(),
       buildTimeSeconds: inputWebpackAnalyticsReport.time,
       sizeBreakdown,
     }
+
+    analyticsReport.time = new Date().toISOString();
 }
 
 const outputPath = './analyticsReport.json';
