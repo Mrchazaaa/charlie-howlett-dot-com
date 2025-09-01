@@ -4,11 +4,16 @@
       <button class="btn btn-link w-100 text-start p-0 border-0 bg-transparent collapsible-header" 
               @click="toggleCollapsed" 
               :class="{ collapsed: !isExpanded }">
-        <strong>{{ title }}</strong>
-        <span v-if="subtitle" class="subtitle text-muted">{{ subtitle }}</span>
-        <span class="float-end">
-          <i class="fas" :class="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-        </span>
+        <div class="d-flex justify-content-between align-items-center position-relative">
+          <span class="collapse-icon" :class="{ rotated: isExpanded }">▶</span>
+          <div class="header-content flex-grow-1 text-center">
+            <strong>{{ title }}</strong>
+            <span v-if="subtitle" class="subtitle text-muted d-block d-sm-inline">{{ subtitle }}</span>
+          </div>
+          <div class="chevron-icon">
+            <i class="fas" :class="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </div>
+        </div>
       </button>
     </div>
     <div class="collapse-content" :class="{ 'show': isExpanded }">
@@ -78,6 +83,41 @@ export default {
 
 .subtitle {
   margin-left: 1rem;
+}
+
+.header-content {
+  min-width: 0; /* Allows text to truncate if needed */
+}
+
+.chevron-icon {
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.collapse-icon {
+  transition: transform 0.3s ease;
+  color: white !important;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.collapse-icon.rotated {
+  transform: rotate(90deg);
+}
+
+.collapse-icon {
+  display: inline-block;
+}
+
+/* On mobile, stack the subtitle below the title */
+@media (max-width: 575.98px) {
+  .subtitle {
+    margin-left: 0;
+    margin-top: 0.25rem;
+    display: block !important;
+    font-size: 0.875rem;
+  }
 }
 
 .collapse-content {
