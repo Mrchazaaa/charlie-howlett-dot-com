@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "netlify dev",
     "build": "vue-cli-service build",
     "build:stats": "vue-cli-service build --report --report-json",
     "lint": "vue-cli-service lint"
@@ -11,6 +11,8 @@
   "dependencies": {
     "@netlify/blobs": "^10.0.8",
     "@netlify/functions": "^4.2.2",
+    "chart.js": "^4.5.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
     "core-js": "^3.8.3",
     "node-sass": "^7.0.1",
     "p5": "^1.4.1",

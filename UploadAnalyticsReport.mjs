@@ -21,7 +21,7 @@ function ReadFileIfExists(filepath)
 
 async function UploadToNetlifyBlobs(analyticsReport)
 {
-    const timestamp = new Date().toISOString();
+    const timestamp = analyticsReport.time;
 
     const STORE = "site-analytics";
     const PREFIX = timestamp;
@@ -131,6 +131,7 @@ if (inputWebpackAnalyticsReport != null)
     };
 
     analyticsReport.WebpackAnalyticsReport = {
+      time: new Date().toISOString(),
       buildTimeSeconds: inputWebpackAnalyticsReport.time,
       sizeBreakdown,
     }

@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <!-- Main Content -->
     <div class="main-content">
       <TitleContainerComponent/>
     </div>
