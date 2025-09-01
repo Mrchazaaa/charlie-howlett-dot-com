@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { getAverageLighthouseScores } from '../utils/lighthouseUtils.js'
+
 export default {
   name: 'AnalyticsSummary',
   props: {
@@ -80,28 +82,28 @@ export default {
     lighthouseMetrics() {
       if (!this.report) return []
 
-      const lighthouse = this.report.lighthouseReports?.[0] || {}
+      const scores = getAverageLighthouseScores(this.report)
 
       return [
         {
           label: 'Performance',
-          value: lighthouse.performance ? Math.round(lighthouse.performance * 100) : 'N/A',
-          unit: lighthouse.performance ? '/100' : ''
+          value: scores.performance > 0 ? Math.round(scores.performance * 100) : 'N/A',
+          unit: scores.performance > 0 ? '/100' : ''
         },
         {
           label: 'Accessibility',
-          value: lighthouse.accessibility ? Math.round(lighthouse.accessibility * 100) : 'N/A',
-          unit: lighthouse.accessibility ? '/100' : ''
+          value: scores.accessibility > 0 ? Math.round(scores.accessibility * 100) : 'N/A',
+          unit: scores.accessibility > 0 ? '/100' : ''
         },
         {
           label: 'Best Practices',
-          value: lighthouse.bestPractices ? Math.round(lighthouse.bestPractices * 100) : 'N/A',
-          unit: lighthouse.bestPractices ? '/100' : ''
+          value: scores.bestPractices > 0 ? Math.round(scores.bestPractices * 100) : 'N/A',
+          unit: scores.bestPractices > 0 ? '/100' : ''
         },
         {
           label: 'SEO',
-          value: lighthouse.seo ? Math.round(lighthouse.seo * 100) : 'N/A',
-          unit: lighthouse.seo ? '/100' : ''
+          value: scores.seo > 0 ? Math.round(scores.seo * 100) : 'N/A',
+          unit: scores.seo > 0 ? '/100' : ''
         }
       ]
     },

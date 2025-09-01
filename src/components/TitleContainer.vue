@@ -78,7 +78,20 @@
   }
   #title-container {
     height: 100vh;
+    height: 100dvh;
     background-color: var(--sky-color);
+  }
+
+  :global(body:has(#title-container)) {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+
+  @supports not (height: 100dvh) {
+    #title-container {
+      height: 100vh;
+    }
   }
   .mountains {
     padding: 0;
