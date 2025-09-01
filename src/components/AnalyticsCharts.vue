@@ -2,7 +2,7 @@
   <div>
     <!-- Lighthouse Performance Chart -->
     <AnalyticsLineChart
-      title="Lighthouse Performance Metrics"
+      title="Lighthouse Performance Trends"
       :analytics-data="analyticsData"
       :datasets="lighthouseDatasets"
       :y-axis-config="lighthouseYAxisConfig"
@@ -22,6 +22,7 @@
 
 <script>
 import AnalyticsLineChart from './AnalyticsLineChart.vue'
+import { getAverageLighthouseScores } from '../utils/lighthouseUtils.js'
 
 export default {
   name: 'AnalyticsCharts',
@@ -36,40 +37,31 @@ export default {
   },
   computed: {
     lighthouseDatasets() {
+      // Pre-calculate all lighthouse scores once per report
+      const reportScores = this.analyticsData.map(report => getAverageLighthouseScores(report))
+
       return [
         {
           label: 'Performance',
-          dataExtractor: (analyticsData) => analyticsData.map(report => {
-            const avgPerformance = this.getAverageLighthouseScore(report, 'performance')
-            return Math.round(avgPerformance * 100)
-          }),
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.performance * 100)),
           borderColor: 'rgba(24, 188, 156, 1)',
           backgroundColor: 'rgba(24, 188, 156, 0.1)'
         },
         {
           label: 'Accessibility',
-          dataExtractor: (analyticsData) => analyticsData.map(report => {
-            const avgAccessibility = this.getAverageLighthouseScore(report, 'accessibility')
-            return Math.round(avgAccessibility * 100)
-          }),
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.accessibility * 100)),
           borderColor: 'rgba(52, 152, 219, 1)',
           backgroundColor: 'rgba(52, 152, 219, 0.1)'
         },
         {
           label: 'Best Practices',
-          dataExtractor: (analyticsData) => analyticsData.map(report => {
-            const avgBestPractices = this.getAverageLighthouseScore(report, 'bestPractices')
-            return Math.round(avgBestPractices * 100)
-          }),
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.bestPractices * 100)),
           borderColor: 'rgba(155, 89, 182, 1)',
           backgroundColor: 'rgba(155, 89, 182, 0.1)'
         },
         {
           label: 'SEO',
-          dataExtractor: (analyticsData) => analyticsData.map(report => {
-            const avgSeo = this.getAverageLighthouseScore(report, 'seo')
-            return Math.round(avgSeo * 100)
-          }),
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.seo * 100)),
           borderColor: 'rgba(241, 196, 15, 1)',
           backgroundColor: 'rgba(241, 196, 15, 0.1)'
         }
@@ -143,21 +135,6 @@ export default {
           text: 'Size (MB)'
         }
       }
-    }
-  },
-  methods: {
-    getAverageLighthouseScore(report, metric) {
-      if (!report.lighthouseReports || !Array.isArray(report.lighthouseReports)) {
-        return 0
-      }
-
-      const scores = report.lighthouseReports
-        .map(r => r[metric])
-        .filter(score => score !== undefined && score !== null)
-
-      if (scores.length === 0) return 0
-
-      return scores.reduce((sum, score) => sum + score, 0) / scores.length
     }
   }
 }
