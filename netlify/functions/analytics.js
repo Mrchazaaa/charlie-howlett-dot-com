@@ -1,11 +1,11 @@
 // netlify/functions/analytics.js
-import { getStore } from "@netlify/blobs";
+const { getStore } = require("@netlify/blobs");
 
 // Tune these to your setup
 const STORE = "site-analytics";
 const PREFIX = ""; // e.g. "data/" if your keys are under a folder
-const siteID = null;
-const token = null;
+const siteID = process.env.NETLIFY_SITE_ID; // Project ID from environment
+const token = process.env.NETLIFY_AUTH_TOKEN; // Personal Access Token from environment
 
 async function GetAnalyticKeyDirectories(store) {
   const { directories } = await store.list({
@@ -38,7 +38,7 @@ async function mapKeysToJson(
   return Object.fromEntries(entries);
 }
 
-export default async (req, ctx) => {
+exports.handler = async (event, context) => {
 
   // In production you can usually omit opts; locally you need them to read live data.
   const opts = siteID && token ? { siteID, token, name: STORE } : undefined;
@@ -55,8 +55,13 @@ export default async (req, ctx) => {
     directories.map((x) => `${x}/analytics.json`)
   );
 
-  return new Response(
-    JSON.stringify(
+  return {
+    statusCode: 200,
+    headers: {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+    },
+    body: JSON.stringify(
       {
         store: STORE,
         results,
@@ -64,11 +69,5 @@ export default async (req, ctx) => {
       null,
       2
     ),
-    {
-      headers: {
-        "content-type": "application/json",
-        "cache-control": "no-store",
-      },
-    }
-  );
+  };
 };
