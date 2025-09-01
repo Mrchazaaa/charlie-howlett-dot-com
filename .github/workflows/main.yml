@@ -31,6 +31,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: web-build
@@ -42,6 +44,7 @@ jobs:
             --site "${{ secrets.NETLIFY_SITE_ID }}" \
             --prod \
             --dir dist \
+            --functions netlify/functions \
             --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
             --json > ./DeployOutput.json
       - name: Upload deploy output
