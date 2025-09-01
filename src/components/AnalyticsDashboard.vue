@@ -26,44 +26,22 @@
       <div class="row mb-4">
         <div class="col-12">
           <!-- Latest Report Summary -->
-          <div class="card mb-3">
-            <div class="card-header">
-              <button class="btn btn-link w-100 text-start p-0 border-0 bg-transparent collapsible-header" 
-                      @click="toggleLatestReport" 
-                      :class="{ collapsed: !showLatestReport }">
-                <strong>Latest Analytics Summary</strong>
-                <span class="ms-2 text-muted">{{ formatDate(latestReport.time) }}</span>
-                <span class="float-end">
-                  <i class="fas" :class="showLatestReport ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                </span>
-              </button>
-            </div>
-            <div class="collapse-content" :class="{ 'show': showLatestReport }">
-              <div class="card-body">
-                <AnalyticsSummary :report="latestReport" />
-              </div>
-            </div>
-          </div>
+          <CollapsibleCard
+            title="Latest Analytics Summary"
+            :subtitle="formatDate(latestReport.time)"
+            :initially-expanded="true">
+            <AnalyticsSummary :report="latestReport" />
+          </CollapsibleCard>
 
           <!-- Historical Reports -->
-          <div class="card mb-3" v-for="(report, index) in sortedHistoricalReports" :key="report.time">
-            <div class="card-header">
-              <button class="btn btn-link w-100 text-start p-0 border-0 bg-transparent collapsible-header" 
-                      @click="toggleHistoricalReport(index)" 
-                      :class="{ collapsed: !showHistoricalReports[index] }">
-                <strong>Analytics Report {{ index + 2 }}</strong>
-                <span class="ms-2 text-muted">{{ formatDate(report.time) }}</span>
-                <span class="float-end">
-                  <i class="fas" :class="showHistoricalReports[index] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                </span>
-              </button>
-            </div>
-            <div class="collapse-content" :class="{ 'show': showHistoricalReports[index] }">
-              <div class="card-body">
-                <AnalyticsSummary :report="report" />
-              </div>
-            </div>
-          </div>
+          <CollapsibleCard
+            v-for="report in sortedHistoricalReports"
+            :key="report.time"
+            title="Analytics Report"
+            :subtitle="formatDate(report.time)"
+            :initially-expanded="false">
+            <AnalyticsSummary :report="report" />
+          </CollapsibleCard>
         </div>
       </div>
     </div>
@@ -74,21 +52,21 @@
 import LoadingScreen from '../components/LoadingScreen.vue';
 import AnalyticsCharts from '../components/AnalyticsCharts.vue';
 import AnalyticsSummary from '../components/AnalyticsSummary.vue';
+import CollapsibleCard from '../components/CollapsibleCard.vue';
 
 export default {
   name: 'AnalyticsDashboard',
   components: {
     LoadingScreen,
     AnalyticsCharts,
-    AnalyticsSummary
+    AnalyticsSummary,
+    CollapsibleCard
   },
   data() {
     return {
       analyticsData: [],
       loading: true,
-      error: null,
-      showLatestReport: true,
-      showHistoricalReports: {}
+      error: null
     }
   },
   computed: {
@@ -97,7 +75,7 @@ export default {
     },
     sortedHistoricalReports() {
       if (this.analyticsData.length <= 1) return []
-      
+
       return this.analyticsData
         .slice(0, -1) // Remove the latest report
         .sort((a, b) => new Date(b.time) - new Date(a.time)) // Sort by date, newest first
@@ -143,12 +121,6 @@ export default {
     formatDate(dateString) {
       if (!dateString) return 'N/A'
       return new Date(dateString).toLocaleString()
-    },
-    toggleLatestReport() {
-      this.showLatestReport = !this.showLatestReport
-    },
-    toggleHistoricalReport(index) {
-      this.showHistoricalReports[index] = !this.showHistoricalReports[index]
     }
   }
 }
@@ -164,17 +136,6 @@ export default {
   to { opacity: 1; }
 }
 
-.card {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border: none;
-}
-
-.card-header {
-  background-color: var(--primary, #007bff);
-  color: white;
-  border-bottom: none;
-}
-
 .text-primary {
   color: var(--primary, #007bff) !important;
 }
@@ -186,27 +147,6 @@ export default {
 
 .spinner-border {
   color: var(--primary, #007bff) !important;
-}
-
-.collapsible-header {
-  color: var(--primary, #007bff) !important;
-  text-decoration: none !important;
-  font-size: 1.1rem;
-}
-
-.collapsible-header:hover {
-  color: var(--primary, #0056b3) !important;
-}
-
-.collapse-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.collapse-content.show {
-  max-height: 2000px;
-  transition: max-height 0.3s ease-in;
 }
 
 </style>
