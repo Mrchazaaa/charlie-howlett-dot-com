@@ -1,14 +1,13 @@
-// netlify/functions/analytics.ts
-import { Context } from "@netlify/functions";
-import { getStore, getDeployStore } from "@netlify/blobs";
+// netlify/functions/analytics.js
+import { getStore } from "@netlify/blobs";
 
 // Tune these to your setup
 const STORE = "site-analytics";
 const PREFIX = ""; // e.g. "data/" if your keys are under a folder
-const siteID = null; // Project ID from Netlify UI
-const token = null; // Personal Access Token
+const siteID = null;
+const token = null;
 
-async function GetAnalyticKeyDirectories(store: Store) {
+async function GetAnalyticKeyDirectories(store) {
   const { directories } = await store.list({
     prefix: PREFIX || undefined,
     directories: true,
@@ -22,24 +21,25 @@ async function GetAnalyticKeyDirectories(store: Store) {
 }
 
 async function mapKeysToJson(
-  siteStore: Store,
-  keys: string[],
-  consistency: "eventual" | "strong" = "eventual"
-): Promise<Record<string, unknown>> {
+  siteStore,
+  keys,
+  consistency = "eventual"
+) {
   const entries = await Promise.all(
     keys.map(async (key) => {
       try {
         const value = await siteStore.get(key, { type: "json", consistency });
-        return [key, value] as const; // value can be object | array | null
+        return [key, value]; // value can be object | array | null
       } catch (e) {
-        return [key, null] as const; // failed to parse or missing
+        return [key, null]; // failed to parse or missing
       }
     })
   );
   return Object.fromEntries(entries);
 }
 
-export default async (req: Request, ctx: Context) => {
+export default async (req, ctx) => {
+
   // In production you can usually omit opts; locally you need them to read live data.
   const opts = siteID && token ? { siteID, token, name: STORE } : undefined;
 
@@ -52,7 +52,7 @@ export default async (req: Request, ctx: Context) => {
 
   const results = await mapKeysToJson(
     siteStore,
-    directories.map((x: any) => `${x}/analytics.json`)
+    directories.map((x) => `${x}/analytics.json`)
   );
 
   return new Response(
