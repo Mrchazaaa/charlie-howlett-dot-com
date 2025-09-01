@@ -2,10 +2,9 @@
   <div class="analytics">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
-        <router-link to="/" class="navbar-brand">Charlie Howlett</router-link>
+        <router-link to="/" class="navbar-brand">Analytics Dashboard</router-link>
         <div class="navbar-nav ml-auto">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/analytics" class="nav-link active">Analytics</router-link>
         </div>
       </div>
     </nav>

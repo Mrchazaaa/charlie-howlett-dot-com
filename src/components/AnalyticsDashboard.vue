@@ -1,11 +1,5 @@
 <template>
   <div class="container-fluid mt-4">
-    <div class="row">
-      <div class="col-12">
-        <h1 class="display-4 text-center mb-4">Analytics Dashboard</h1>
-      </div>
-    </div>
-
     <LoadingScreen :show="loading" message="Loading analytics data..." />
 
     <div v-if="error" class="row">
