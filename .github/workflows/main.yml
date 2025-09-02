@@ -46,7 +46,7 @@ jobs:
             --dir dist \
             --functions netlify/functions \
             --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
-            --json > ./DeployOutput.json
+            --json | tee ./DeployOutput.json
       - name: Upload deploy output
         uses: actions/upload-artifact@v4
         with:
