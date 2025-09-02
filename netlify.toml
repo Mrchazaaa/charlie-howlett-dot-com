@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
+# Skip build for production context (CI deployments)
+[context.production]
+  command = ""
+
 [functions]
   node_bundler = "esbuild"
 

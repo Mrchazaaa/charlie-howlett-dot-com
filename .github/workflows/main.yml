@@ -39,31 +39,14 @@ jobs:
           path: dist
       - name: Deploy Production to Netlify
         run: |
-          if npx --yes netlify-cli deploy \
+          npx --yes netlify-cli deploy \
             --auth "${{ secrets.NETLIFY_AUTH_TOKEN }}" \
             --site "${{ secrets.NETLIFY_SITE_ID }}" \
             --prod \
             --dir dist \
             --functions netlify/functions \
             --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
-            --build false \
-            --json > ./DeployOutput.json 2>&1; then
-            echo "Deploy successful"
-            cat ./DeployOutput.json
-          else
-            echo "Deploy failed, attempting to get more details..."
-            cat ./DeployOutput.json
-            echo "Running deploy without --json for more verbose output:"
-            npx --yes netlify-cli deploy \
-              --auth "${{ secrets.NETLIFY_AUTH_TOKEN }}" \
-              --site "${{ secrets.NETLIFY_SITE_ID }}" \
-              --prod \
-              --dir dist \
-              --functions netlify/functions \
-              --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
-              --build false
-            exit 1
-          fi
+            --json | tee ./DeployOutput.json
       - name: Upload deploy output
         uses: actions/upload-artifact@v4
         with:
