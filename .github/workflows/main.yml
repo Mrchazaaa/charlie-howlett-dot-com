@@ -46,6 +46,7 @@ jobs:
             --dir dist \
             --functions netlify/functions \
             --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
+            --build false \
             --json > ./DeployOutput.json 2>&1; then
             echo "Deploy successful"
             cat ./DeployOutput.json
@@ -59,7 +60,8 @@ jobs:
               --prod \
               --dir dist \
               --functions netlify/functions \
-              --message "GitHub Actions deploy ${GITHUB_SHA::7}"
+              --message "GitHub Actions deploy ${GITHUB_SHA::7}" \
+              --build false
             exit 1
           fi
       - name: Upload deploy output
