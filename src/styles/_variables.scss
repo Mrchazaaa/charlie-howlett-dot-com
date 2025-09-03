@@ -6,6 +6,10 @@ $margin-lg: 15px;
 $margin-md: 10px;
 $margin-sm: 5px;
 
+:root {
+  --linkedin: url("@/assets/linkedin.svg");
+}
+
 :root[theme="light"] {
   --celestial: url("@/assets/moon-light.svg");
   --mountains: url("@/assets/mountains.svg");
