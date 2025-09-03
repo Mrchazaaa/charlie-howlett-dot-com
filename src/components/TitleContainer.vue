@@ -2,12 +2,17 @@
   <div id="title-container">
     <div class="celestial"/>
 
+    <button @click="themeToggle" class="theme-toggle" id="theme-toggle" title="Toggles light & dark theme" aria-label="Toggle theme" aria-live="polite">
+      <svg class="half-circle-toggle" aria-hidden="true" width="24" height="24" viewBox="0 0 32 32">
+        <path d="M16 .5C7.4.5.5 7.4.5 16S7.4 31.5 16 31.5 31.5 24.6 31.5 16 24.6.5 16 .5zm0 28.1V3.4C23 3.4 28.6 9 28.6 16S23 28.6 16 28.6z" fill="currentColor" />
+      </svg>
+    </button>
+
     <div id='sketch'></div>
 
     <div id="title">
       <div id="title-content">
         <h1>Charlie Howlett</h1>
-        <button @click="themeToggle" id="dark-theme-btn" type="button" class="btn btn-primary">Dark Theme</button>
       </div>
 
       <img class="mountains"/>
@@ -45,6 +50,14 @@
         var htmlElement = document.querySelectorAll("html")[0];
         var darkThemeEnabled = htmlElement.getAttribute('theme') == "dark";
         var nextTheme = darkThemeEnabled ? 'light' : 'dark';
+        
+        // Toggle rotation state
+        var toggleButton = document.getElementById('theme-toggle');
+        if (nextTheme === 'dark') {
+          toggleButton.classList.add('rotated');
+        } else {
+          toggleButton.classList.remove('rotated');
+        }
 
         setTheme(nextTheme);
         document.querySelector('html').setAttribute('theme', nextTheme);
@@ -70,12 +83,37 @@
       display: none;
     }
   }
-  @media (max-width: $breakpoint-md) {
-    #dark-theme-btn {
-      float: none !important;
-      margin-right: 0px !important;
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      background-color: rgba(255, 255, 255, 1);
+    }
+
+    &:focus {
+      outline: none;
     }
   }
+
+  .half-circle-toggle {
+    transform-origin: center;
+    transition: transform 0.3s ease;
+  }
+
+  .theme-toggle.rotated .half-circle-toggle {
+    transform: rotate(180deg);
+  }
+
   #title-container {
     height: 100vh;
     height: 100dvh;
