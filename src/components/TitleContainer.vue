@@ -256,7 +256,7 @@
     content:var(--celestial);
   }
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-md) {
     .controls-container {
       top: 15px;
       left: 15px;

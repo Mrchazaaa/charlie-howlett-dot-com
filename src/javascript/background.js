@@ -57,10 +57,12 @@ class Cloud {
         }
 
         // Initial x coordinate of cloud is set so that the cloud starts just off the left side of the screen.
-        this.startingPoint = -((this.cloudWidth + (cloudPointMaxWidth)) * this.height);
-        this.x = this.startingPoint;
-        // Randomly positon cloud along x axis.
-        // this.x = Math.random() * this.width;
+        this.startingPointPx = -((this.cloudWidth + (cloudPointMaxWidth)) * this.height);
+        this.startingPointPerc = this.startingPointPx / this.width;
+        // Randomly position cloud along x axis if this is the initial load, otherwise start offscreen.
+        // Store as percentage of screen width.
+        this.xPerc = this.startRandomly ? Math.random() : this.startingPointPerc;
+        this.x = this.xPerc * this.width;
 
         // Initial y coordinate of cloud is a random number between 0 and canvas height (stored as percentage of viewport height from top of page).
         // Minus maximum height of clouds, plus 10 padding, to avoid rendering clouds off the top of the screen.
@@ -69,7 +71,7 @@ class Cloud {
     }
 
     // A cloud is essentially a collection of ellipses, of varying size. Each ellipse is refered to as a "cloud point".
-    constructor(sketch, newWidth, newHeight, speed){
+    constructor(sketch, newWidth, newHeight, speed, startRandomly = false){
         // Pass a reference of the sketch object, which contains all p5 methods.
         this.sketch = sketch;
         // Store a local copy of the width and height of the canvas containing this cloud.
@@ -77,20 +79,31 @@ class Cloud {
         this.height = newHeight;
 
         this.speed = speed;
+        this.startRandomly = startRandomly;
 
         this.initialise();
     }
 
     move() {
-        if (this.x++ >= this.width + (this.cloudPoints[0][1]/2)) {
-            this.x = this.startingPoint - (this.x - (this.width + (this.cloudPoints[0][1]/2)));
-        }
-
         let newTime = new Date();
         let timeDiff = (newTime - this.lastTime)/1000; //milliseconds
+
+        // Cap timeDiff to prevent clouds from jumping when page is backgrounded
+        timeDiff = Math.min(timeDiff, 0.1); // Max 100ms worth of movement
+
         let offset = (this.width/this.speed)*timeDiff;
 
-        this.x+=offset;
+        this.x += offset;
+        this.xPerc = this.x / this.width;
+
+        // If cloud has moved off the right side of screen, reset to left.
+        if (this.x >= this.width + (this.cloudPoints[0][1]/2)) {
+            let overshoot = this.x - (this.width + (this.cloudPoints[0][1]/2));
+            this.startingPointPx = -((this.cloudWidth + (this.cloudPoints[this.cloudPoints.length - 1][2])) * this.height);
+            this.startingPointPerc = this.startingPointPx / this.width;
+            this.xPerc = this.startingPointPerc - (overshoot / this.width);
+            this.x = this.xPerc * this.width;
+        }
 
         this.lastTime = newTime;
     }
@@ -98,6 +111,9 @@ class Cloud {
     updateSize(newWidth, newHeight) {
         this.width = newWidth;
         this.height = newHeight;
+
+        // Update x position based on percentage of screen width.
+        this.x = this.xPerc * this.width;
 
         for (let i = 0; i < this.cloudPoints.length; i++) {
             // Update y position of clouds.
@@ -145,7 +161,7 @@ function clouds(sketch, dockItem) {
 
         sketch.createCanvas(width, height);
 
-        clouds = Array.from({length: initialCloudCount}, () => new Cloud(sketch, width, height, cloudSpeeds[Math.floor(Math.random() * cloudSpeeds.length)]));
+        clouds = Array.from({length: initialCloudCount}, () => new Cloud(sketch, width, height, cloudSpeeds[Math.floor(Math.random() * cloudSpeeds.length)], true));
 
         // cloudInterval = setInterval( function() {
         //     clouds.push(new Cloud(sketch, width, height));
