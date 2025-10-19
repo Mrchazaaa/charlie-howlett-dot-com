@@ -6,10 +6,6 @@
       <button @click="themeToggle" class="icon theme-toggle btn btn-light rounded-circle shadow-sm" id="theme-toggle" title="Toggles light & dark theme" aria-label="Toggle theme" aria-live="polite">
         <img src="@/assets/dark-theme.svg" class="half-circle-toggle" aria-hidden="true" width="24" height="24" alt="Theme toggle" />
       </button>
-
-      <a href="/analytics" class="icon analytics-link btn btn-light rounded-circle shadow-sm" title="Analytics" aria-label="View analytics">
-        <img src="@/assets/analytics.svg" aria-hidden="true" width="24" height="24" alt="Analytics" />
-      </a>
     </div>
 
     <div id='sketch'></div>
@@ -38,7 +34,7 @@
 </template>
 
 <script>
-  import {cloudsSketch, setTheme} from '../javascript/background.js';
+  import {cloudsSketch, setTheme as setSketchTheme} from '../javascript/background.js';
   import ImagePreloader from "../javascript/imagePreloader.js";
 
   export default {
@@ -60,23 +56,40 @@
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));
+      var theme = this.determineInitialTheme()
+      this.setTheme(theme)
     },
     methods: {
+      determineInitialTheme() {
+        // Dark theme from 6 PM (18:00) to 6 AM (6:00)
+        const hour = new Date().getHours();
+        if (hour >= 18 || hour < 6) {
+          return 'dark';
+        } else {
+          return 'light';
+        }
+      },
+      getCurrentTheme() {
+        var htmlElement = document.querySelector("html");
+        var theme = htmlElement.getAttribute('theme');
+
+        if (theme == 'dark' || theme == 'light') {
+          return theme;
+        }
+        else {
+          return 'light';
+        }
+      },
+      setTheme(targetTheme) {
+        var htmlElement = document.querySelector("html");
+        setSketchTheme(targetTheme);
+        htmlElement.setAttribute('theme', targetTheme);
+      },
       themeToggle() {
-        var htmlElement = document.querySelectorAll("html")[0];
-        var darkThemeEnabled = htmlElement.getAttribute('theme') == "dark";
+        var darkThemeEnabled = this.getCurrentTheme() == "dark";
         var nextTheme = darkThemeEnabled ? 'light' : 'dark';
 
-        // Toggle rotation state
-        var toggleButton = document.getElementById('theme-toggle');
-        if (nextTheme === 'dark') {
-          toggleButton.classList.add('rotated');
-        } else {
-          toggleButton.classList.remove('rotated');
-        }
-
-        setTheme(nextTheme);
-        document.querySelector('html').setAttribute('theme', nextTheme);
+        this.setTheme(nextTheme);
       },
       makeScrollSmooth(event) {
         var chevron = event.target;
@@ -94,6 +107,24 @@
 <style lang="scss">
   @import "@/styles/_variables.scss";
 
+  .icon {
+    &:hover {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    z-index: 2;
+    gap: 20px; // Fallback for Bootstrap gap-3
+
+    & svg, & img {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+
   .controls-icons {
     position: absolute;
     top: 20px;
@@ -107,23 +138,15 @@
   }
 
   .theme-toggle {
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
     padding: 8px;
-
-    &:hover {
-      transform: scale(1.1);
-    }
   }
 
   .analytics-link {
     display: inline-block;
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
     text-decoration: none;
     padding: 8px;
-
-    &:hover {
-      transform: scale(1.1);
-    }
   }
 
   .half-circle-toggle {
@@ -131,7 +154,7 @@
     transition: transform 0.3s ease;
   }
 
-  .theme-toggle.rotated .half-circle-toggle {
+  html[theme="dark"] .half-circle-toggle {
     transform: rotate(180deg);
   }
 
@@ -210,24 +233,9 @@
       z-index: 2;
     }
 
-    .icon {
-      z-index: 2;
-      gap: 20px; // Fallback for Bootstrap gap-3
-
-      & svg, & img {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
     .social-link {
       display: inline-block;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-
-      &:hover {
-        transform: scale(1.1);
-        opacity: 1;
-      }
+    //   transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     .github {

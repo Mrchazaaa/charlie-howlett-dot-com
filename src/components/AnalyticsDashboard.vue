@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid mt-4">
-    <LoadingScreen :show="loading" message="Loading analytics data..." />
+    <LoadingScreen :show="loading" />
 
     <div v-if="error" class="row">
       <div class="col-12">
@@ -11,32 +11,27 @@
       </div>
     </div>
 
-    <div v-else-if="!loading && !error" class="analytics-content">
+    <div v-else-if="!loading && !error" class="analytics-content pb-4">
+      <div class="mb-4">
+        <!-- Lighthouse Performance Chart -->
+        <AnalyticsLineChart
+          title="Lighthouse Performance Trends"
+          :analytics-data="analyticsData"
+          :datasets="lighthouseDatasets"
+          :y-axis-config="lighthouseYAxisConfig"
+          chart-title="Lighthouse Scores Over Time"
+        />
+      </div>
 
-      <!-- Analytics Charts -->
-      <AnalyticsCharts :analytics-data="analyticsData" />
-
-      <!-- Analytics Reports -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <!-- Latest Report Summary -->
-          <CollapsibleCard
-            title="Latest Analytics Summary"
-            :subtitle="formatDate(latestReport.time)"
-            :initially-expanded="true">
-            <AnalyticsSummary :report="latestReport" />
-          </CollapsibleCard>
-
-          <!-- Historical Reports -->
-          <CollapsibleCard
-            v-for="report in sortedHistoricalReports"
-            :key="report.time"
-            title="Analytics Report"
-            :subtitle="formatDate(report.time)"
-            :initially-expanded="false">
-            <AnalyticsSummary :report="report" />
-          </CollapsibleCard>
-        </div>
+      <div>
+        <!-- Bundle Size Trends Chart -->
+        <AnalyticsLineChart
+          title="Bundle Size Trends"
+          :analytics-data="analyticsData"
+          :datasets="bundleSizeDatasets"
+          :y-axis-config="bundleSizeYAxisConfig"
+          chart-title="Bundle Size Trends Over Time"
+        />
       </div>
     </div>
   </div>
@@ -44,17 +39,14 @@
 
 <script>
 import LoadingScreen from '../components/LoadingScreen.vue';
-import AnalyticsCharts from '../components/AnalyticsCharts.vue';
-import AnalyticsSummary from '../components/AnalyticsSummary.vue';
-import CollapsibleCard from '../components/CollapsibleCard.vue';
+import AnalyticsLineChart from './AnalyticsLineChart.vue'
+import { getAverageLighthouseScores } from '../utils/lighthouseUtils.js'
 
 export default {
   name: 'AnalyticsDashboard',
   components: {
     LoadingScreen,
-    AnalyticsCharts,
-    AnalyticsSummary,
-    CollapsibleCard
+    AnalyticsLineChart
   },
   data() {
     return {
@@ -73,7 +65,108 @@ export default {
       return this.analyticsData
         .slice(0, -1) // Remove the latest report
         .sort((a, b) => new Date(b.time) - new Date(a.time)) // Sort by date, newest first
+    },
+    lighthouseDatasets() {
+      // Pre-calculate all lighthouse scores once per report
+      const reportScores = this.analyticsData.map(report => getAverageLighthouseScores(report))
+
+      return [
+        {
+          label: 'Performance',
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.performance * 100)),
+          borderColor: 'rgba(24, 188, 156, 1)',
+          backgroundColor: 'rgba(24, 188, 156, 0.1)'
+        },
+        {
+          label: 'Accessibility',
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.accessibility * 100)),
+          borderColor: 'rgba(52, 152, 219, 1)',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)'
+        },
+        {
+          label: 'Best Practices',
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.bestPractices * 100)),
+          borderColor: 'rgba(155, 89, 182, 1)',
+          backgroundColor: 'rgba(155, 89, 182, 0.1)'
+        },
+        {
+          label: 'SEO',
+          dataExtractor: () => reportScores.map(scores => Math.round(scores.seo * 100)),
+          borderColor: 'rgba(241, 196, 15, 1)',
+          backgroundColor: 'rgba(241, 196, 15, 0.1)'
+        }
+      ]
+    },
+    bundleSizeDatasets() {
+      return [
+        {
+          label: 'Total Size',
+          dataExtractor: (analyticsData) => analyticsData.map(report => {
+            const totalSize = report.WebpackAnalyticsReport?.sizeBreakdown?.total?.bytes || 0
+            return totalSize / 1024 / 1024 // Convert to MB
+          }),
+          borderColor: 'rgba(24, 188, 156, 1)',
+          backgroundColor: 'rgba(24, 188, 156, 0.1)'
+        },
+        {
+          label: 'JavaScript',
+          dataExtractor: (analyticsData) => analyticsData.map(report => {
+            const jsSize = report.WebpackAnalyticsReport?.sizeBreakdown?.javascript?.bytes || 0
+            return jsSize / 1024 / 1024 // Convert to MB
+          }),
+          borderColor: 'rgba(52, 152, 219, 1)',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)'
+        },
+        {
+          label: 'CSS',
+          dataExtractor: (analyticsData) => analyticsData.map(report => {
+            const cssSize = report.WebpackAnalyticsReport?.sizeBreakdown?.css?.bytes || 0
+            return cssSize / 1024 / 1024 // Convert to MB
+          }),
+          borderColor: 'rgba(155, 89, 182, 1)',
+          backgroundColor: 'rgba(155, 89, 182, 0.1)'
+        },
+        {
+          label: 'Images',
+          dataExtractor: (analyticsData) => analyticsData.map(report => {
+            const imgSize = report.WebpackAnalyticsReport?.sizeBreakdown?.images?.bytes || 0
+            return imgSize / 1024 / 1024 // Convert to MB
+          }),
+          borderColor: 'rgba(241, 196, 15, 1)',
+          backgroundColor: 'rgba(241, 196, 15, 0.1)'
+        }
+      ]
+    },
+    lighthouseYAxisConfig() {
+      return {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: function(value) {
+            return value + '%'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Score (%)'
+        }
+      }
+    },
+    bundleSizeYAxisConfig() {
+      return {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return value.toFixed(1) + ' MB'
+          }
+        },
+        title: {
+          display: true,
+          text: 'Size (MB)'
+        }
+      }
     }
+
   },
   async mounted() {
     await this.loadAnalyticsData()
@@ -128,19 +221,6 @@ export default {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-.text-primary {
-  color: var(--primary, #007bff) !important;
-}
-
-.btn-primary {
-  background-color: var(--primary, #007bff);
-  border-color: var(--primary, #007bff);
-}
-
-.spinner-border {
-  color: var(--primary, #007bff) !important;
 }
 
 </style>

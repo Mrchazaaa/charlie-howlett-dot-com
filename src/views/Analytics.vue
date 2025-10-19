@@ -1,8 +1,8 @@
 <template>
   <div class="analytics">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-        <router-link to="/" class="navbar-brand">Analytics Dashboard</router-link>
+        <span class="navbar-brand">Analytics Dashboard</span>
         <div class="navbar-nav ml-auto">
           <router-link to="/" class="nav-link">Home</router-link>
         </div>
@@ -24,9 +24,14 @@ export default {
 </script>
 
 <style scoped>
+@import "@/styles/card.scss";
+
+.navbar {
+  background-color: var(--navbar-primary-background);
+}
+
 .analytics {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 .navbar-brand {
