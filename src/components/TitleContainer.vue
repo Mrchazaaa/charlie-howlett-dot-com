@@ -6,10 +6,6 @@
       <button @click="themeToggle" class="icon theme-toggle btn btn-light rounded-circle shadow-sm" id="theme-toggle" title="Toggles light & dark theme" aria-label="Toggle theme" aria-live="polite">
         <img src="@/assets/dark-theme.svg" class="half-circle-toggle" aria-hidden="true" width="24" height="24" alt="Theme toggle" />
       </button>
-
-      <a href="/analytics" class="icon analytics-link btn btn-light rounded-circle shadow-sm" title="Analytics" aria-label="View analytics">
-        <img src="@/assets/analytics.svg" aria-hidden="true" width="24" height="24" alt="Analytics" />
-      </a>
     </div>
 
     <div id='sketch'></div>
@@ -60,10 +56,19 @@
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));
-      var theme = this.getCurrentTheme()
+      var theme = this.determineInitialTheme()
       this.setTheme(theme)
     },
     methods: {
+      determineInitialTheme() {
+        // Dark theme from 6 PM (18:00) to 6 AM (6:00)
+        const hour = new Date().getHours();
+        if (hour >= 18 || hour < 6) {
+          return 'dark';
+        } else {
+          return 'light';
+        }
+      },
       getCurrentTheme() {
         var htmlElement = document.querySelector("html");
         var theme = htmlElement.getAttribute('theme');
