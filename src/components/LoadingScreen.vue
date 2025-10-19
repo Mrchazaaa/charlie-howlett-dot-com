@@ -2,7 +2,7 @@
   <div v-if="show" class="loading-screen" data-lcp-exclude>
     <div class="loading-content">
       <div class="loading-spinner"></div>
-      <h2 class="mt-3">{{ message }}</h2>
+      <h2 v-if="message" class="mt-3">{{ message }}</h2>
     </div>
   </div>
 </template>
@@ -16,8 +16,7 @@ export default {
       default: false
     },
     message: {
-      type: String,
-      default: 'Loading...'
+      type: String
     }
   }
 }

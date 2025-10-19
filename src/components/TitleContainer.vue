@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import {cloudsSketch, setTheme} from '../javascript/background.js';
+  import {cloudsSketch, setTheme as setSketchTheme} from '../javascript/background.js';
   import ImagePreloader from "../javascript/imagePreloader.js";
 
   export default {
@@ -60,23 +60,31 @@
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));
+      var theme = this.getCurrentTheme()
+      this.setTheme(theme)
     },
     methods: {
+      getCurrentTheme() {
+        var htmlElement = document.querySelector("html");
+        var theme = htmlElement.getAttribute('theme');
+
+        if (theme == 'dark' || theme == 'light') {
+          return theme;
+        }
+        else {
+          return 'light';
+        }
+      },
+      setTheme(targetTheme) {
+        var htmlElement = document.querySelector("html");
+        setSketchTheme(targetTheme);
+        htmlElement.setAttribute('theme', targetTheme);
+      },
       themeToggle() {
-        var htmlElement = document.querySelectorAll("html")[0];
-        var darkThemeEnabled = htmlElement.getAttribute('theme') == "dark";
+        var darkThemeEnabled = this.getCurrentTheme() == "dark";
         var nextTheme = darkThemeEnabled ? 'light' : 'dark';
 
-        // Toggle rotation state
-        var toggleButton = document.getElementById('theme-toggle');
-        if (nextTheme === 'dark') {
-          toggleButton.classList.add('rotated');
-        } else {
-          toggleButton.classList.remove('rotated');
-        }
-
-        setTheme(nextTheme);
-        document.querySelector('html').setAttribute('theme', nextTheme);
+        this.setTheme(nextTheme);
       },
       makeScrollSmooth(event) {
         var chevron = event.target;
@@ -94,6 +102,24 @@
 <style lang="scss">
   @import "@/styles/_variables.scss";
 
+  .icon {
+    &:hover {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    z-index: 2;
+    gap: 20px; // Fallback for Bootstrap gap-3
+
+    & svg, & img {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+
   .controls-icons {
     position: absolute;
     top: 20px;
@@ -107,23 +133,15 @@
   }
 
   .theme-toggle {
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
     padding: 8px;
-
-    &:hover {
-      transform: scale(1.1);
-    }
   }
 
   .analytics-link {
     display: inline-block;
-    transition: all 0.3s ease;
+    // transition: all 0.3s ease;
     text-decoration: none;
     padding: 8px;
-
-    &:hover {
-      transform: scale(1.1);
-    }
   }
 
   .half-circle-toggle {
@@ -131,7 +149,7 @@
     transition: transform 0.3s ease;
   }
 
-  .theme-toggle.rotated .half-circle-toggle {
+  html[theme="dark"] .half-circle-toggle {
     transform: rotate(180deg);
   }
 
@@ -210,24 +228,9 @@
       z-index: 2;
     }
 
-    .icon {
-      z-index: 2;
-      gap: 20px; // Fallback for Bootstrap gap-3
-
-      & svg, & img {
-        width: 28px;
-        height: 28px;
-      }
-    }
-
     .social-link {
       display: inline-block;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-
-      &:hover {
-        transform: scale(1.1);
-        opacity: 1;
-      }
+    //   transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     .github {

@@ -1,9 +1,9 @@
 <template>
-  <div class="row mb-4">
+  <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title mb-0">{{ title }}</h3>
+          <strong class="card-title mb-0 strong">{{ title }}</strong>
         </div>
         <div class="card-body">
           <div class="chart-container">
@@ -11,9 +11,9 @@
           </div>
           <div class="custom-legend" v-if="chartLegendItems.length">
             <div class="legend-row" v-for="(row, rowIndex) in legendRows" :key="rowIndex">
-              <div 
-                class="legend-item" 
-                v-for="item in row" 
+              <div
+                class="legend-item"
+                v-for="item in row"
                 :key="item.datasetIndex"
                 @click="toggleDataset(item.datasetIndex)"
                 :class="{ hidden: item.hidden }">
@@ -79,10 +79,6 @@ export default {
           text: 'Value'
         }
       })
-    },
-    chartTitle: {
-      type: String,
-      default: ''
     }
   },
   data() {
@@ -161,10 +157,6 @@ export default {
               y: this.yAxisConfig
             },
             plugins: {
-              title: {
-                display: !!this.chartTitle,
-                text: this.chartTitle
-              },
               legend: {
                 display: false // Hide Chart.js legend, we'll use custom one
               }
@@ -183,7 +175,7 @@ export default {
     },
     generateLegendItems() {
       if (!this.chart) return
-      
+
       this.chartLegendItems = this.chart.data.datasets.map((dataset, index) => ({
         text: dataset.label,
         fillStyle: dataset.borderColor,
@@ -193,7 +185,7 @@ export default {
     },
     toggleDataset(datasetIndex) {
       if (!this.chart) return
-      
+
       const meta = this.chart.getDatasetMeta(datasetIndex)
       meta.hidden = !meta.hidden
       this.chartLegendItems[datasetIndex].hidden = meta.hidden
@@ -212,17 +204,6 @@ export default {
 .chart-container canvas {
   width: 100% !important;
   height: 100% !important;
-}
-
-.card {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border: none;
-}
-
-.card-header {
-  background-color: var(--primary, #007bff);
-  color: white;
-  border-bottom: none;
 }
 
 .custom-legend {

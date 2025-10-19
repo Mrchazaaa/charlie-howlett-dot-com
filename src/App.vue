@@ -13,8 +13,8 @@
 <style lang="scss">
   @import "@/styles/_variables.scss";
   @import "@/styles/scss/bootstrap.scss";
-  @import "@/styles/flatly.scss";
-  @import "@/styles/darkly.scss";
+  @import '@/styles/styles.scss';
+
 
   body, html {
     margin:0;
@@ -23,8 +23,5 @@
   }
   hr {
       margin-bottom: 0px;
-  }
-  .border {
-    // border-radius: 4px;
   }
 </style>
