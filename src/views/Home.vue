@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <LoadingScreen :show="loading" message="Loading..." />
+    <LoadingScreen :show="loading" />
     <div class="main-content" :class="{ hidden: loading }">
       <TitleContainerComponent @images-loaded="onImagesLoaded"/>
     </div>
