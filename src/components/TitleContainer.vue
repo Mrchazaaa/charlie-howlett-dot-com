@@ -44,7 +44,7 @@
         myp5: null
       }
     },
-    created() {
+    async created() {
       const imageSources = [
           require('@/assets/mountains.svg'),
           require('@/assets/mountains-dark.svg'),
@@ -52,7 +52,8 @@
           require("@/assets/moon-dark.webp")
       ];
 
-      ImagePreloader.preloadImages(imageSources);
+      await ImagePreloader.preloadImages(imageSources);
+      this.$emit('images-loaded');
     },
     mounted() {
       this.myp5 = cloudsSketch(document.getElementById('sketch'));

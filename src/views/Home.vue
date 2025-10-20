@@ -1,18 +1,31 @@
 <template>
   <div class="home">
-    <div class="main-content">
-      <TitleContainerComponent/>
+    <LoadingScreen :show="loading" message="Loading..." />
+    <div class="main-content" :class="{ hidden: loading }">
+      <TitleContainerComponent @images-loaded="onImagesLoaded"/>
     </div>
   </div>
 </template>
 
 <script>
 import TitleContainerComponent from '../components/TitleContainer.vue';
+import LoadingScreen from '../components/LoadingScreen.vue';
 
 export default {
   name: 'HomePage',
   components: {
     TitleContainerComponent,
+    LoadingScreen,
+  },
+  data() {
+    return {
+      loading: true
+    };
+  },
+  methods: {
+    onImagesLoaded() {
+      this.loading = false;
+    }
   }
 }
 </script>

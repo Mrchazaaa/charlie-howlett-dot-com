@@ -182,7 +182,6 @@ export default {
         }
 
         const data = await response.json()
-        console.log('Raw analytics data:', data)
 
         // Extract timestamp from keys and add to reports
         this.analyticsData = Object.entries(data.results)
@@ -195,8 +194,6 @@ export default {
               time: timestamp
             }
           })
-
-        console.log('Processed analytics data:', this.analyticsData)
 
       } catch (err) {
         this.error = `Error loading analytics data: ${err.message}`
