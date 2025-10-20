@@ -17,9 +17,7 @@
     "node-sass": "^7.0.1",
     "p5": "^1.4.1",
     "sass-loader": "^13.0.0",
-    "swiper": "^8.2.4",
     "vue": "^3.2.13",
-    "vue-easy-lightbox": "^1.4.1",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
