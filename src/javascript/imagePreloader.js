@@ -3,17 +3,32 @@ class ImagePreloader {
   }
 
   preloadImages(images) {
-    console.log(`Adding preload links`);
+    const promises = images.map(src => {
+      return new Promise((resolve) => {
+        const img = new Image();
 
-    images.forEach(
-        src => {
+        img.onload = () => {
+          resolve(src);
+        };
+
+        img.onerror = () => {
+          // Resolve anyway to not block the loading screen
+          resolve(src);
+        };
+
+        // Also add preload link for browser optimization
         const link = document.createElement('link');
         link.rel = 'preload';
         link.as = 'image';
         link.href = src;
         document.head.appendChild(link);
-        console.log(`Added preload link for: ${src}`);
+
+        // Start loading the image
+        img.src = src;
+      });
     });
+
+    return Promise.all(promises);
   }
 }
 
